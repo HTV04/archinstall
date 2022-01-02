@@ -110,6 +110,11 @@ def has_uefi() -> bool:
 	return os.path.isdir('/sys/firmware/efi')
 
 
+def has_uefi_32() -> bool:
+	with open(f"/sys/firmware/efi/fw_platform_size") as size:
+		return size.read().strip() == "32"
+
+
 def graphics_devices() -> dict:
 	cards = {}
 	for line in SysCommand("lspci"):

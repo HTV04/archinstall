@@ -9,7 +9,7 @@ import subprocess
 import glob
 from .disk import get_partitions_in_use, Partition
 from .general import SysCommand, generate_password
-from .hardware import has_uefi, is_vm, cpu_vendor
+from .hardware import has_uefi, has_uefi_32, is_vm, cpu_vendor
 from .locale_helpers import verify_keyboard_layout, verify_x11_keyboard_layout
 from .disk.helpers import get_mount_info
 from .mirrors import use_mirrors
@@ -665,8 +665,10 @@ class Installer:
 
 			log(f"GRUB uses {boot_partition.path} as the boot partition.", level=logging.INFO)
 			if has_uefi():
+				uefi_arch = "i386" if has_uefi_32() else "x86_64"
+
 				self.pacstrap('efibootmgr') # TODO: Do we need? Yes, but remove from minimal_installation() instead?
-				if not (handle := SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB')).exit_code == 0:
+				if not (handle := SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --target={uefi_arch}-efi --efi-directory=/boot --bootloader-id=GRUB')).exit_code == 0:
 					raise DiskError(f"Could not install GRUB to {self.target}/boot: {handle}")
 			else:
 				if not (handle := SysCommand(f'/usr/bin/arch-chroot {self.target} grub-install --target=i386-pc --recheck {boot_partition.parent}')).exit_code == 0:
