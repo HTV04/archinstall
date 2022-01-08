@@ -13,7 +13,7 @@ if os.getuid() != 0:
 	exit(1)
 
 # Log various information about hardware before starting the installation. This might assist in troubleshooting
-archinstall.log(f"Hardware model detected: {archinstall.sys_vendor()} {archinstall.product_name()}; UEFI mode: {archinstall.has_uefi()}", level=logging.DEBUG)
+archinstall.log(f"Hardware model detected: {archinstall.sys_vendor()} {archinstall.product_name()}; UEFI: {archinstall.has_uefi()}; 32-bit UEFI: {archinstall.has_uefi_32()}", level=logging.DEBUG)
 archinstall.log(f"Processor model detected: {archinstall.cpu_model()}", level=logging.DEBUG)
 archinstall.log(f"Memory statistics: {archinstall.mem_available()} available out of {archinstall.mem_total()} total installed", level=logging.DEBUG)
 archinstall.log(f"Virtualization detected: {archinstall.virtualization()}; is VM: {archinstall.is_vm()}", level=logging.DEBUG)

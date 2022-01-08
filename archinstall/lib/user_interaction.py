@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 
 from .disk import BlockDevice, suggest_single_disk_layout, suggest_multi_disk_layout, valid_parted_position, all_disks
 from .exceptions import RequirementError, UserError, DiskError
-from .hardware import AVAILABLE_GFX_DRIVERS, has_uefi, has_amd_graphics, has_intel_graphics, has_nvidia_graphics
+from .hardware import AVAILABLE_GFX_DRIVERS, has_uefi, has_uefi_32, has_amd_graphics, has_intel_graphics, has_nvidia_graphics
 from .locale_helpers import list_keyboard_languages, list_timezones, list_locales
 from .networking import list_interfaces
 from .menu import Menu
@@ -333,13 +333,14 @@ def ask_for_a_timezone() -> str:
 	return selected_tz
 
 
-def ask_for_bootloader(advanced_options :bool = False) -> str:
-	bootloader = "systemd-bootctl" if has_uefi() else "grub-install"
-	if has_uefi():
+def ask_for_bootloader(advanced_options=False) -> str:
+	# 32-bit UEFI does not support systemd-boot, so it must use GRUB
+	# Relevant: https://github.com/systemd/systemd/issues/17056
+	bootloader = 'grub-install'
+	if has_uefi() and not has_uefi_32():
 		if not advanced_options:
-			bootloader_choice = Menu('Would you like to use GRUB as a bootloader instead of systemd-boot?', ['yes', 'no'], default_option='no').run()
-			if bootloader_choice == "yes":
-				bootloader = "grub-install"
+			if Menu('Would you like to use GRUB as a bootloader instead of systemd-boot?', ['yes', 'no'], default_option='no').run() == "no":
+				bootloader = 'systemd-bootctl'
 		else:
 			# We use the common names for the bootloader as the selection, and map it back to the expected values.
 			choices = ['systemd-boot', 'grub', 'efistub']
