@@ -54,7 +54,7 @@ def suggest_single_disk_layout(block_device, default_filesystem=None, advanced_o
 	layout[block_device.path]['partitions'].append({
 		# Root
 		"type" : "primary",
-		"start" : "206MiB",
+		"start" : "203MiB",
 		"encrypted" : False,
 		"format" : True,
 		"mountpoint" : "/",
@@ -64,7 +64,7 @@ def suggest_single_disk_layout(block_device, default_filesystem=None, advanced_o
 	})
 
 	if has_uefi():
-		layout[block_device.path]['partitions'][-1]['start'] = '513MiB'
+		layout[block_device.path]['partitions'][-1]['start'] = '512MiB'
 
 	if not using_subvolumes and block_device.size >= MIN_SIZE_TO_ALLOW_HOME_PART:
 		using_home_partition = input('Would you like to create a separate partition for /home? (Y/n): ').strip().lower() in ('', 'y', 'yes')
@@ -167,7 +167,7 @@ def suggest_multi_disk_layout(block_devices, default_filesystem=None, advanced_o
 	layout[root_device.path]['partitions'].append({
 		# Root
 		"type" : "primary",
-		"start" : "206MiB",
+		"start" : "203MiB",
 		"size" : "100%",
 		"encrypted" : False,
 		"format" : True,
@@ -177,7 +177,7 @@ def suggest_multi_disk_layout(block_devices, default_filesystem=None, advanced_o
 		}
 	})
 	if has_uefi():
-		layout[root_device.path]['partitions'][-1]['start'] = '513MiB'
+		layout[root_device.path]['partitions'][-1]['start'] = '512MiB'
 
 	layout[home_device.path]['partitions'].append({
 		# Home
